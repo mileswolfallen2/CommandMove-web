@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CommandMove — Cut & Paste for macOS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "DM Sans", -apple-system, sans-serif;
+      background: #f5f0ff;
+      color: #2d2b3d;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    /* NAV */
+    nav {
+      padding: 20px 0;
+      text-align: center;
+    }
+    .nav-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      color: #2d2b3d;
+    }
+    .nav-pill .scissors { font-size: 18px; }
+
+    /* HERO */
+    .hero { padding: 80px 0 60px; }
+
+    h1 {
+      font-size: 52px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 12px;
+    }
+
+    h1 .purple { color: #9b8aff; }
+    h1 .pink { color: #ff8fab; }
+    h1 .green { color: #57c98a; }
+
+    .hero p {
+      font-size: 17px;
+      color: #7a7490;
+      max-width: 420px;
+      margin: 0 auto 36px;
+    }
+
+    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 30px;
+      border-radius: 14px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #9b8aff;
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(155,138,255,0.35);
+    }
+    .btn-primary:hover {
+      background: #8a76f0;
+      box-shadow: 0 4px 24px rgba(155,138,255,0.5);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: #2d2b3d;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .btn-secondary:hover {
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+
+    /* KEYBOARD */
+    .shortcut-section { padding: 0 0 80px; }
+
+    .shortcut-card {
+      display: inline-flex;
+      gap: 32px;
+      align-items: center;
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px 48px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    .shortcut .part { text-align: center; }
+    .shortcut .label {
+      font-size: 12px;
+      color: #aaa5c0;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .key-group { display: flex; gap: 6px; }
+    .key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 44px;
+      padding: 0 14px;
+      background: #f5f0ff;
+      border: 2px solid #e8e0ff;
+      border-bottom-width: 4px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: #6b5ce7;
+      font-family: inherit;
+    }
+
+    .arrow {
+      font-size: 24px;
+      color: #c4b5fd;
+    }
+
+    /* CARDS */
+    .cards { padding: 0 0 80px; }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 16px;
+      text-align: left;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+
+    .card-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .card-icon.purple { background: #f0ebff; }
+    .card-icon.green { background: #e6f9ee; }
+    .card-icon.pink { background: #fff0f3; }
+    .card-icon.yellow { background: #fff8e6; }
+
+    .card h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #8a849e;
+      line-height: 1.6;
+    }
+
+    /* INSTALL */
+    .install { padding: 0 0 80px; }
+
+    .install h2 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .code-block {
+      background: #2d2b3d;
+      border-radius: 16px;
+      overflow: hidden;
+      text-align: left;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 6px;
+      padding: 14px 18px;
+    }
+
+    .code-dots span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .code-dots .r { background: #ff6b6b; }
+    .code-dots .y { background: #ffd93d; }
+    .code-dots .g { background: #6bcb77; }
+
+    .code-block pre {
+      padding: 4px 22px 22px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      color: #e0dce8;
+    }
+
+    .code-block .c { color: #6b6880; }
+    .code-block .cmd { color: #c4b5fd; }
+    .code-block .str { color: #86e8ab; }
+
+    .setup-steps {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      background: #fff;
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f0ebff;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #6b5ce7;
+    }
+
+    .step-text {
+      font-size: 14px;
+      color: #5a5570;
+      line-height: 1.6;
+    }
+
+    .step-text strong { color: #2d2b3d; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 0;
+      text-align: center;
+      font-size: 13px;
+      color: #aaa5c0;
+    }
+
+    footer a {
+      color: #9b8aff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 500px) {
+      h1 { font-size: 38px; }
+      .shortcut-card { flex-direction: column; gap: 16px; padding: 24px 32px; }
+      .arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="container">
+      <div class="nav-pill">
+        <span class="scissors">✂️</span> CommandMove
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="container">
+      <h1>
+        <span class="purple">Cut</span> & <span class="pink">Paste</span><br>
+        <span class="green">files on Mac.</span>
+      </h1>
+      <p>macOS only lets you copy files. CommandMove adds the missing Cmd+X so you can actually move them.</p>
+      <div class="btns">
+        <a href="https://github.com/mileswolfallen2/command-move/releases/download/1.0/CommandMove.dmg" class="btn btn-primary" target="_blank">Download v1.0</a>
+        <a href="https://github.com/mileswolfallen2/command-move" class="btn btn-secondary" target="_blank">GitHub →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="shortcut-section">
+    <div class="container">
+      <div class="shortcut-card shortcut">
+        <div class="part">
+          <div class="label">Cut files</div>
+          <div class="key-group">
+            <span class="key">⌘</span>
+            <span class="key">X</span>
+          </div>
+        </div>
+        <div class="arrow">→</div>
+        <div class="part">
+          <div class="label">Move them</div>
+          <div class="key-group">
+            <span class="key">⌘</span>
+            <span class="key">V</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cards">
+    <div class="container">
+      <div class="card">
+        <div class="card-icon purple">✂️</div>
+        <h3>Works with your muscle memory</h3>
+        <p>Uses the same Cmd+X / Cmd+V shortcuts you already know. No new keybindings to learn.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon green">📍</div>
+        <h3>Lives in your menu bar</h3>
+        <p>Click the scissors icon to cut, paste, clear clipboard, or quit. Stays out of your way.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon pink">🛡️</div>
+        <h3>Handles conflicts</h3>
+        <p>Duplicate filename at the destination? It appends a number automatically. Skips files already there.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon yellow">⚡</div>
+        <h3>Lightweight Swift app</h3>
+        <p>No dependencies. Just Swift, CGEvent taps, and AppleScript. Compiles with a single command.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="install">
+    <div class="container">
+      <h2>Get started</h2>
+
+      <div class="btns" style="margin-bottom: 32px;">
+        <a href="https://github.com/mileswolfallen2/command-move/releases/tag/1.0" class="btn btn-primary" target="_blank">Download DMG</a>
+      </div>
+
+      <div class="setup-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">Download and open the <strong>.dmg</strong> file, then drag <strong>CommandMove</strong> into Applications</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">Open <strong>System Settings → Privacy & Security → Accessibility</strong> and toggle CommandMove on</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Allow <strong>Automation</strong> access when prompted so it can control Finder</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">Select files in Finder, press <strong>⌘X</strong>, navigate somewhere, press <strong>⌘V</strong> — done!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Built by <a href="https://github.com/mileswolfallen2" target="_blank">mileswolfallen2</a> · MIT License · macOS 12+</p>
+    </div>
+  </footer>
+
+</body>
+</html>
